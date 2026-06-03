@@ -84,7 +84,3 @@ O BFF deve consumir este servico pela URL base do microservico. Quando for integ
 
 - trocar o BFF para `UseMocks = false`
 - apontar `DocumentsBaseUrl` para a porta deste servico
-
-## Alunos
-
-Preencher com os nomes do grupo.
