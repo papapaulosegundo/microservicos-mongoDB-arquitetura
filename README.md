@@ -78,6 +78,40 @@ docker build -t seuusuario/pjbl/documents-ms:v1 .
 docker run -p 8080:8080 seuusuario/pjbl/documents-ms:v1
 ```
 
+## Publicacao no Docker Hub sem instalar Docker local
+
+Este repositorio foi preparado para publicar a imagem pelo **GitHub Actions**, entao voce nao precisa instalar Docker Desktop na maquina para cumprir a entrega.
+
+### Requisitos
+
+- repositorio criado no Docker Hub: `deboanalagoa/pjbl-mongodb`
+- secret `DOCKERHUB_USERNAME` no GitHub com valor `deboanalagoa`
+- secret `DOCKERHUB_TOKEN` no GitHub com o token do Docker Hub
+
+### Arquivos adicionados para isso
+
+- `.github/workflows/docker-mongodb.yml`
+- `.dockerignore`
+
+### Como publicar
+
+1. subir este codigo para o GitHub
+2. abrir o repositorio no GitHub
+3. ir em `Actions`
+4. abrir o workflow `Publish MongoDB Microservice Image`
+5. clicar em `Run workflow`
+
+Tambem e possivel publicar automaticamente ao fazer push na branch padrao (`main` ou `master`).
+
+### Resultado esperado
+
+Se o workflow concluir com sucesso, a imagem sera publicada no Docker Hub com tags como:
+
+- `deboanalagoa/pjbl-mongodb:latest`
+- `deboanalagoa/pjbl-mongodb:sha-<commit>`
+
+Isso atende ao fluxo pedido na tarefa usando build e push automatizados no Docker Hub.
+
 ## Integracao com o BFF
 
 O BFF deve consumir este servico pela URL base do microservico. Quando for integrar:
