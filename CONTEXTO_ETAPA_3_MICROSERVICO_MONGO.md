@@ -167,12 +167,12 @@ Connection string esperada:
 
 ## Swagger / OpenAPI
 
-O projeto foi preparado com OpenAPI e Scalar para documentacao da API.
+O projeto foi preparado com OpenAPI e Swagger para documentacao da API.
 
 Endpoints esperados em desenvolvimento:
 
 - `http://localhost:5102/openapi/v1.json`
-- `http://localhost:5102/scalar`
+- `http://localhost:5102/swagger`
 
 ## Porta padronizada
 
@@ -222,7 +222,7 @@ Resultado:
 Depois de preencher usuario e senha do Atlas, os proximos passos imediatos sao:
 
 1. rodar o microservico localmente
-2. abrir o `Scalar`
+2. abrir o `Swagger`
 3. testar o CRUD
 4. confirmar no Atlas se a collection `documents` foi criada
 5. inserir pelo menos um documento de teste

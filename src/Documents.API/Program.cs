@@ -2,7 +2,6 @@ using Documents.API.Middlewares;
 using Documents.Application.Common.Behaviors;
 using Documents.Infrastructure;
 using FluentValidation;
-using Scalar.AspNetCore;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +10,8 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
 builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -29,7 +30,8 @@ app.MapOpenApi();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.MapControllers();

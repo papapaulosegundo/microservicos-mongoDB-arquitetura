@@ -19,7 +19,7 @@ Este servico representa o item 3 da atividade:
 - MongoDB Atlas
 - MediatR
 - FluentValidation
-- Scalar/OpenAPI
+- Swagger/OpenAPI
 - xUnit + ArchUnitNET
 
 ## Estrutura
@@ -69,7 +69,7 @@ dotnet run --project src/Documents.API
 OpenAPI:
 
 - `http://localhost:5102/openapi/v1.json`
-- `http://localhost:5102/scalar`
+- `http://localhost:5102/swagger`
 
 ## Docker
 
