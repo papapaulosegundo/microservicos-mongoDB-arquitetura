@@ -1,103 +1,56 @@
-# Contexto da Etapa 3 - Microservico 1 MongoDB
+# Contexto Atual - Microservico MongoDB
 
-Este arquivo registra o contexto completo do que foi feito no item 3 da atividade para manter continuidade nas proximas conversas, nas proximas entregas e na integracao com o BFF.
+Este arquivo descreve somente o que existe hoje neste repositorio, como o servico funciona e o que ainda falta considerando o que o `Entrega03.md` pede.
 
-## Objetivo desta etapa
+## Escopo deste repositorio
 
-Implementar o **Microservico 1** da arquitetura distribuida, usando:
+Este repositorio implementa o microservico do dominio `Documents`, que cobre o item 3 da entrega:
 
-- banco `MongoDB Atlas`
-- dominio independente
-- CRUD completo
-- Swagger/OpenAPI documentado
+- microservico independente em ASP.NET Core
+- persistencia em MongoDB Atlas
+- CRUD completo de documentos
+- documentacao via OpenAPI/Swagger
+- dockerizacao do servico
 
-Nesta solucao, o dominio escolhido para o microservico foi:
+Ele nao contem o microfrontend, o BFF, o microservico SQL, a Azure Function nem o API Gateway. Esses itens fazem parte da entrega geral, mas nao estao neste codigo.
 
-- `Documents`
-
-## Decisao arquitetural adotada
-
-O dominio `Documents` foi escolhido para o microservico MongoDB porque combina melhor com armazenamento NoSQL:
-
-- estrutura flexivel
-- metadados variaveis
-- tags
-- conteudo textual
-- evolucao simples do schema
-
-Essa decisao tambem conversa bem com o restante da arquitetura:
-
-- frontend ja possui `mfe-documents`
-- BFF ja possui contrato `/documents`
-- o futuro microservico SQL pode ficar com um dominio mais relacional, como `People`
-
-## Relacao com as etapas anteriores
-
-### Etapa 1 - Microfrontend
-
-Na etapa 1, o frontend foi preparado para consumir:
-
-- `GET /documents`
-- `GET /documents/:id`
-
-mas ainda por mocks.
-
-### Etapa 2 - BFF
-
-Na etapa 2, o BFF foi preparado para:
-
-- expor `/documents`
-- agregar dados em `/aggregated-data`
-- consumir um microservico real de documentos futuramente
-
-Agora, nesta etapa, esse microservico comeca a existir de fato.
-
-## O que foi implementado neste repositorio
-
-Foi criado um novo repositorio para o microservico MongoDB:
-
-- `microservicos-mongoDB-arquitetura`
-
-Dentro dele, foi montada uma solucao .NET completa para o dominio `Documents`.
-
-## Estrutura criada
+## Estrutura atual
 
 ```text
-microservicos-mongoDB-arquitetura
-|-- src
-|   |-- Documents.API
-|   |-- Documents.Application
-|   |-- Documents.Domain
-|   `-- Documents.Infrastructure
-|-- tests
-|   `-- Documents.ArchitectureTests
-|-- DocumentsService.sln
-|-- Dockerfile
-|-- README.md
-|-- .gitignore
-`-- CONTEXTO_ETAPA_3_MICROSERVICO_MONGO.md
+src
+|-- Documents.API
+|-- Documents.Application
+|-- Documents.Domain
+`-- Documents.Infrastructure
+tests
+`-- Documents.ArchitectureTests
 ```
 
-## Padroes arquiteturais aplicados
+## Stack e organizacao
 
-O projeto foi estruturado com:
+O codigo esta organizado em Clean Architecture com separacao entre `API`, `Application`, `Domain` e `Infrastructure`.
 
-- Clean Architecture
-  - `API`
-  - `Application`
-  - `Domain`
-  - `Infrastructure`
-- Vertical Slice
-  - comandos e queries separados por funcionalidade
-- separacao clara entre contrato HTTP, regra de aplicacao e persistencia
+Tambem ha organizacao por feature na camada `Application`, com slices para:
 
-## Dominio implementado
+- `CreateDocument`
+- `UpdateDocument`
+- `DeleteDocument`
+- `GetDocumentById`
+- `ListDocuments`
 
-Foi criada a entidade principal:
+Tecnologias encontradas no repositorio:
 
-- `Document`
+- .NET 9
+- ASP.NET Core Web API
+- MediatR
+- FluentValidation
+- MongoDB.Driver
+- Swagger / OpenAPI
+- xUnit + ArchUnitNET
 
-Campos atuais:
+## Modelo de dados atual
+
+A entidade persistida e `Document`, com estes campos:
 
 - `Id`
 - `Title`
@@ -110,11 +63,11 @@ Campos atuais:
 - `CreatedAtUtc`
 - `UpdatedAtUtc`
 
-## CRUD implementado
+O `Id` usa `ObjectId` do MongoDB com representacao em `string`.
 
-O microservico ficou com CRUD completo para `Documents`.
+## Endpoints implementados
 
-Endpoints expostos:
+O controller exposto em `src/Documents.API/Controllers/DocumentsController.cs` publica:
 
 - `GET /api/documents`
 - `GET /api/documents/{id}`
@@ -122,170 +75,145 @@ Endpoints expostos:
 - `PUT /api/documents/{id}`
 - `DELETE /api/documents/{id}`
 
-## Slices criados
+As operacoes passam pelo `IMediator`; o controller nao acessa repositorio diretamente.
 
-Na camada `Application`, foram criados slices para:
+## Como a conexao com o Mongo funciona hoje
 
-- `CreateDocument`
-- `UpdateDocument`
-- `DeleteDocument`
-- `GetDocumentById`
-- `ListDocuments`
-
-Tambem foram criados:
-
-- DTOs
-- validators
-- handlers
-- pipeline de validacao
-
-## Integracao com MongoDB
-
-Foi configurada a integracao com o MongoDB Atlas usando:
-
-- `MongoDB.Driver`
-
-Configuracao atual:
-
-- `DatabaseName = gestaorh_documents_ms`
-- `DocumentsCollectionName = documents`
-
-Arquivo de configuracao:
+A configuracao e lida da secao `MongoDb` em:
 
 - `src/Documents.API/appsettings.json`
 - `src/Documents.API/appsettings.Development.json`
 
-Connection string esperada:
+Campos usados:
 
-```json
-"MongoDb": {
-  "ConnectionString": "mongodb+srv://USUARIO:SENHA@clusterarquitetura.s1lyczy4.mongodb.net/?retryWrites=true&w=majority&appName=ClusterArquitetura",
-  "DatabaseName": "gestaorh_documents_ms",
-  "DocumentsCollectionName": "documents"
-}
-```
+- `ConnectionString`
+- `DatabaseName`
+- `DocumentsCollectionName`
 
-## Swagger / OpenAPI
+Valores configurados no repositorio:
 
-O projeto foi preparado com OpenAPI e Swagger para documentacao da API.
+- `DatabaseName`: `gestaorh_documents_ms`
+- `DocumentsCollectionName`: `documents`
 
-Endpoints esperados em desenvolvimento:
+Na infraestrutura, `AddInfrastructure` registra:
 
-- `http://localhost:5102/openapi/v1.json`
+- `MongoDbOptions` via `IOptions`
+- `MongoDbContext` como `Singleton`
+- `IDocumentRepository` com implementacao `DocumentRepository`
+
+O fluxo da conexao e este:
+
+1. `Program.cs` chama `builder.Services.AddInfrastructure(builder.Configuration)`.
+2. `DependencyInjection.cs` faz o bind da secao `MongoDb`.
+3. `MongoDbContext` cria um `MongoClient` com a `ConnectionString`.
+4. O contexto abre o banco configurado em `DatabaseName`.
+5. O repositorio usa a collection configurada em `DocumentsCollectionName`.
+
+Hoje a string de conexao esta preenchida nos arquivos de configuracao do projeto. O repositorio nao usa variaveis de ambiente para essa configuracao.
+
+## Comportamento da API
+
+O pipeline atual da API faz o seguinte:
+
+- usa controllers com JSON em camelCase
+- registra OpenAPI e Swagger
+- aplica validacao com `FluentValidation` via pipeline do MediatR
+- usa `ExceptionHandlingMiddleware` para retornar:
+  - `400` em erro de validacao
+  - `500` em erro inesperado
+- ativa `UseHttpsRedirection()`
+
+O Swagger so e exposto em ambiente de desenvolvimento.
+
+## Execucao local
+
+Em `launchSettings.json`, a API esta configurada para rodar localmente em:
+
+- `http://localhost:5102`
+- `https://localhost:7102` no perfil HTTPS
+
+Com a aplicacao em desenvolvimento, os endpoints de documentacao sao:
+
 - `http://localhost:5102/swagger`
+- `http://localhost:5102/openapi/v1.json`
 
-## Porta padronizada
+## Docker e publicacao
 
-Foi alinhada a porta local do microservico para:
+Existe um `Dockerfile` no repositorio com:
 
-- `5102`
+- build e publish da solucao em .NET 9
+- imagem final `mcr.microsoft.com/dotnet/aspnet:9.0`
+- exposicao da porta `8080`
+- `ASPNETCORE_URLS=http://+:8080`
 
-Essa escolha foi feita para casar com a configuracao ja prevista no BFF.
+Tambem existem:
 
-## Dockerizacao
+- `.dockerignore`
+- `.github/workflows/docker-mongodb.yml`
 
-Foi criado um `Dockerfile` para a futura publicacao da imagem.
+O workflow publica imagem no Docker Hub usando os secrets:
 
-Objetivo:
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
 
-- facilitar entrega
-- preparar push no Docker Hub
-- permitir execucao isolada do servico
+e gera tags para `${DOCKERHUB_USERNAME}/pjbl-mongodb`.
 
-## Testes de arquitetura
+## Testes existentes
 
-Foi criado um projeto separado:
+Existe um projeto de testes de arquitetura em `tests/Documents.ArchitectureTests` cobrindo:
 
-- `tests/Documents.ArchitectureTests`
+- `Domain` sem dependencia de outras camadas
+- `Application` sem dependencia de `Infrastructure` e `API`
+- `Infrastructure` sem dependencia de `API`
+- controllers sem dependencia direta de repositorios
 
-Esses testes validam regras basicas de:
+## O que foi possivel confirmar daqui
 
-- isolamento do dominio
-- independencia da aplicacao
-- infraestrutura sem dependencia da API
-- controllers sem acesso direto a repository
+Foi possivel confirmar por leitura do codigo:
 
-## Validacao realizada
+- a arquitetura em camadas existe
+- o CRUD HTTP esta implementado
+- a conexao com Mongo esta configurada
+- Swagger/OpenAPI esta configurado
+- Dockerfile e workflow de publicacao existem
+- ha testes de arquitetura no repositorio
 
-Foi validado nesta etapa:
+Nao foi possivel confirmar execucao de `dotnet build` e `dotnet test` neste ambiente porque o restore falhou ao acessar `https://api.nuget.org/v3/index.json`.
 
-- `dotnet build DocumentsService.sln`
-- `dotnet test tests/Documents.ArchitectureTests/Documents.ArchitectureTests.csproj`
+## O que ainda falta para a entrega, comparando com `Entrega03.md`
 
-Resultado:
+No escopo deste repositorio, ainda faltam evidencias ou artefatos finais que o arquivo de entrega pede:
 
-- build com sucesso
-- testes de arquitetura aprovados
+- confirmar o servico rodando com Swagger acessivel
+- confirmar o CRUD funcionando contra o MongoDB Atlas
+- disponibilizar link do repositorio publico no GitHub
+- disponibilizar link da imagem publicada no Docker Hub
+- atualizar o `README.md` com a documentacao final exigida, se necessario
 
-## O que ainda falta fazer agora
+Fora do escopo deste repositorio, a entrega geral ainda pede componentes que nao estao aqui:
 
-Depois de preencher usuario e senha do Atlas, os proximos passos imediatos sao:
+- microfrontend
+- BFF com `GET /aggregated-data`
+- microservico SQL
+- Azure Function
+- API Gateway
+- PDF/ARC42 com links finais
+- C4 Model atualizado
+- Canvas
+- prints
+- video no YouTube
 
-1. rodar o microservico localmente
-2. abrir o `Swagger`
-3. testar o CRUD
-4. confirmar no Atlas se a collection `documents` foi criada
-5. inserir pelo menos um documento de teste
-6. depois integrar o BFF a esse servico real
-
-## Como esta previsto que vai ficar depois
-
-Quando a integracao com o BFF for feita, o fluxo esperado sera:
-
-1. `mfe-documents` chama o BFF
-2. BFF chama este microservico MongoDB
-3. microservico consulta a collection `documents`
-4. BFF adapta ou agrega a resposta
-5. frontend recebe dados reais
-
-## Premissas para as proximas conversas
-
-Para manter consistencia nas proximas etapas, considerar sempre:
-
-1. Este repositorio representa o microservico MongoDB do dominio `Documents`.
-2. O banco principal deste servico e `MongoDB Atlas`.
-3. A porta local esperada e `5102`.
-4. O nome do banco definido foi `gestaorh_documents_ms`.
-5. A collection principal definida foi `documents`.
-6. O consumo pelo frontend nao sera direto; passara pelo BFF.
-7. O BFF deve substituir mocks por chamadas reais quando essa integracao for ligada.
-
-## Sugestao natural de continuidade
-
-A sequencia mais natural a partir daqui e:
-
-1. subir o microservico local
-2. testar `POST /api/documents`
-3. testar `GET /api/documents`
-4. verificar criacao dos dados no Atlas
-5. voltar ao repositorio do BFF
-6. trocar `UseMocks` para `false`
-7. apontar `DocumentsBaseUrl` para `http://localhost:5102/`
-8. integrar o `DocumentsBffClient` ao contrato real
-
-## Arquivos mais importantes para retomar rapido
-
-Se precisarmos retomar rapido a etapa 3 depois, olhar primeiro:
+## Arquivos principais para consultar
 
 - `src/Documents.API/Program.cs`
 - `src/Documents.API/Controllers/DocumentsController.cs`
 - `src/Documents.API/appsettings.json`
 - `src/Documents.API/appsettings.Development.json`
-- `src/Documents.Domain/Entities/Document.cs`
-- `src/Documents.Domain/Interfaces/IDocumentRepository.cs`
+- `src/Documents.API/Properties/launchSettings.json`
+- `src/Documents.Infrastructure/DependencyInjection.cs`
 - `src/Documents.Infrastructure/Persistence/MongoDbContext.cs`
 - `src/Documents.Infrastructure/Repositories/DocumentRepository.cs`
+- `src/Documents.Domain/Entities/Document.cs`
 - `tests/Documents.ArchitectureTests/CleanArchitectureTests.cs`
 - `Dockerfile`
-- `README.md`
-- `CONTEXTO_ETAPA_3_MICROSERVICO_MONGO.md`
-
-## Observacao final
-
-Nesta etapa, o foco principal foi tirar o microservico MongoDB do zero e deixa-lo pronto para:
-
-- demonstracao isolada
-- validacao academica
-- integracao futura com o BFF
-
-Com isso, o item 3 ja possui uma base real, coerente com o restante da arquitetura e pronta para os proximos passos da entrega.
+- `.github/workflows/docker-mongodb.yml`
