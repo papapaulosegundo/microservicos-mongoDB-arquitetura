@@ -6,4 +6,4 @@ obj/
 *.db
 *.log
 .env
-CONTEXTO_ETAPA_3_MICROSERVICO_MONGO.md
+mongoContexto.md
