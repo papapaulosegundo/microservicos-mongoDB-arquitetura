@@ -10,5 +10,6 @@ public record UpdateDocumentCommand(
     string OwnerId,
     string OwnerName,
     string Status,
+    int PendingSignatures,
     string Content,
     IReadOnlyCollection<string>? Tags) : IRequest<DocumentResponseDto?>;

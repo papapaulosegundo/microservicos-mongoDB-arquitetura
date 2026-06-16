@@ -14,6 +14,7 @@ public static class DocumentMappings
             document.OwnerId,
             document.OwnerName,
             document.Status,
+            document.PendingSignatures,
             document.Content,
             document.Tags,
             document.CreatedAtUtc,

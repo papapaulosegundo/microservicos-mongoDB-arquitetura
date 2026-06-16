@@ -27,6 +27,7 @@ public class UpdateDocumentHandler : IRequestHandler<UpdateDocumentCommand, Docu
         existing.OwnerId = request.OwnerId;
         existing.OwnerName = request.OwnerName;
         existing.Status = request.Status;
+        existing.PendingSignatures = request.PendingSignatures;
         existing.Content = request.Content;
         existing.Tags = request.Tags?.ToList() ?? [];
         existing.UpdatedAtUtc = DateTime.UtcNow;

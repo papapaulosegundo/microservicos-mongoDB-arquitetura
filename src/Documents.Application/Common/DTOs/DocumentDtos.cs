@@ -7,6 +7,7 @@ public record DocumentResponseDto(
     string OwnerId,
     string OwnerName,
     string Status,
+    int PendingSignatures,
     string Content,
     IReadOnlyCollection<string> Tags,
     DateTime CreatedAtUtc,
@@ -18,6 +19,7 @@ public record CreateDocumentRequestDto(
     string OwnerId,
     string OwnerName,
     string Status,
+    int PendingSignatures,
     string Content,
     IReadOnlyCollection<string>? Tags);
 
@@ -27,5 +29,6 @@ public record UpdateDocumentRequestDto(
     string OwnerId,
     string OwnerName,
     string Status,
+    int PendingSignatures,
     string Content,
     IReadOnlyCollection<string>? Tags);

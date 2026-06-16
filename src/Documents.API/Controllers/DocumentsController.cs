@@ -47,6 +47,7 @@ public class DocumentsController : ControllerBase
             request.OwnerId,
             request.OwnerName,
             request.Status,
+            request.PendingSignatures,
             request.Content,
             request.Tags);
 
@@ -66,6 +67,7 @@ public class DocumentsController : ControllerBase
             request.OwnerId,
             request.OwnerName,
             request.Status,
+            request.PendingSignatures,
             request.Content,
             request.Tags);
 

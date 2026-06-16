@@ -25,6 +25,7 @@ public class CreateDocumentHandler : IRequestHandler<CreateDocumentCommand, Docu
             OwnerId = request.OwnerId,
             OwnerName = request.OwnerName,
             Status = request.Status,
+            PendingSignatures = request.PendingSignatures,
             Content = request.Content,
             Tags = request.Tags?.ToList() ?? [],
             CreatedAtUtc = now,

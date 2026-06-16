@@ -11,6 +11,7 @@ public class CreateDocumentValidator : AbstractValidator<CreateDocumentCommand>
         RuleFor(x => x.OwnerId).NotEmpty().MaximumLength(50);
         RuleFor(x => x.OwnerName).NotEmpty().MaximumLength(120);
         RuleFor(x => x.Status).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.PendingSignatures).GreaterThanOrEqualTo(0);
         RuleFor(x => x.Content).NotEmpty();
     }
 }

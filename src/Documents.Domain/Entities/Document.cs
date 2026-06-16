@@ -24,6 +24,9 @@ public class Document
     [BsonElement("status")]
     public string Status { get; set; } = string.Empty;
 
+    [BsonElement("pendingSignatures")]
+    public int PendingSignatures { get; set; }
+
     [BsonElement("content")]
     public string Content { get; set; } = string.Empty;
 
